@@ -46,7 +46,7 @@ RUN cd /tmp/build/nginx-${NGINX_VERSION} && \
         --with-http_ssl_module \
         --with-threads \
         --add-module=/tmp/build/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
-    make -j $(getconf _NPROCESSORS_ONLN) && \
+    make -j $(getconf _NPROCESSORS_ONLN) CFLAGS+="-pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g -D NGX_HAVE_INET6=0" && \
     make install
 
 # Download ffmpeg source

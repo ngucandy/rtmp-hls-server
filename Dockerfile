@@ -4,7 +4,7 @@ ARG ALPINE_VERSION=3.8
 FROM alpine:${ALPINE_VERSION} as builder
 MAINTAINER Tareq Alqutami <tareqaziz2010@gmail.com>
 
-# Versions of nginx, rtmp-module and ffmpeg 
+# Versions of nginx, rtmp-module and ffmpeg
 ARG  NGINX_VERSION=1.17.5
 ARG  NGINX_RTMP_MODULE_VERSION=1.2.1
 ARG  FFMPEG_VERSION=4.2.1
@@ -47,7 +47,7 @@ RUN cd /tmp/build/nginx-${NGINX_VERSION} && \
         --with-http_ssl_module \
         --with-threads \
         --add-module=/tmp/build/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
-    make -j $(getconf _NPROCESSORS_ONLN) && \
+    make -j $(getconf _NPROCESSORS_ONLN) CFLAGS+="-pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g -D NGX_HAVE_INET6=0" && \
     make install
 
 # Download ffmpeg source
@@ -78,7 +78,7 @@ RUN cd /tmp/build/ffmpeg-${FFMPEG_VERSION} && \
 	  --extra-libs="-lpthread -lm" && \
 	make -j $(getconf _NPROCESSORS_ONLN) && \
 	make install	
-	
+
 # Copy stats.xsl file to nginx html directory and clean build files
 RUN cp /tmp/build/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION}/stat.xsl /usr/local/nginx/html/stat.xsl && \
 	rm -rf /tmp/build
